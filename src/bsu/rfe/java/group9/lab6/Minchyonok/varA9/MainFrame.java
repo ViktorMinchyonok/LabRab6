@@ -14,8 +14,9 @@ public class MainFrame extends JFrame {
 // не распахнуто на весь экран
 private static final int WIDTH = 700;
 private static final int HEIGHT = 500;
-private JMenuItem pauseMenuItem;
-private JMenuItem resumeMenuItem;
+private JMenuItem pauseMenuItemAllBalls; 
+private JMenuItem pauseMenuItem5Balls;
+private JMenuItem resumeMenuItemAllBalls; 
 // Поле, по которому прыгают мячи
 private Field field = new Field();
 // Конструктор главного окна приложения
@@ -40,7 +41,9 @@ if (!pauseMenuItem.isEnabled() &&
 !resumeMenuItem.isEnabled()) {
 // Ни один из пунктов меню не являются
 // доступными - сделать доступным "Паузу"
-pauseMenuItem.setEnabled(true);
+pauseMenuItemAllBalls.setEnabled(true);
+pauseMenuItem5Balls.setEnabled(true);
+resumeMenuItemAllBalls.setEnabled(false);
 }
 }
 };
@@ -48,24 +51,38 @@ menuBar.add(ballMenu);
 ballMenu.add(addBallAction);
 JMenu controlMenu = new JMenu("Управление");
 menuBar.add(controlMenu);
-Action pauseAction = new AbstractAction("Приостановить движение"){
+Action pauseAction5Balls = new AbstractAction("Приостановить движение случайных 5 мячей"){
+			public void actionPerformed(ActionEvent event) {
+				field.pause5Balls();
+				pauseMenuItemAllBalls.setEnabled(true);
+				pauseMenuItem5Balls.setEnabled(false);
+				resumeMenuItemAllBalls.setEnabled(true);
+			}
+		}; 
+
+pauseMenuItem5Balls = controlMenu.add(pauseAction5Balls);
+pauseMenuItem5Balls.setEnabled(false);
+
+Action pauseActionAllBalls = new AbstractAction("Приостановить движение всех мячей"){
 public void actionPerformed(ActionEvent event) {
-field.pause();
-pauseMenuItem.setEnabled(false);
-resumeMenuItem.setEnabled(true);
-}
-};
-pauseMenuItem = controlMenu.add(pauseAction);
-pauseMenuItem.setEnabled(false);
-Action resumeAction = new AbstractAction("Возобновить движение") {
+field.pauseAllBalls();
+pauseMenuItemAllBalls.setEnabled(false);
+pauseMenuItem5Balls.setEnabled(false);
+resumeMenuItemAllBalls.setEnabled(true);
+			}
+		};
+pauseMenuItemAllBalls = controlMenu.add(pauseActionAllBalls);
+pauseMenuItemAllBalls.setEnabled(false);
+Action resumeActionAllBalls = new AbstractAction("Возобновить движение всех мячей") {
 public void actionPerformed(ActionEvent event) {
-field.resume();
-pauseMenuItem.setEnabled(true);
-resumeMenuItem.setEnabled(false);
-}
-};
-resumeMenuItem = controlMenu.add(resumeAction);
-resumeMenuItem.setEnabled(false);
+field.resumeAllBalls();
+pauseMenuItemAllBalls.setEnabled(true);
+pauseMenuItem5Balls.setEnabled(true);
+resumeMenuItemAllBalls.setEnabled(false);
+			}
+		};
+resumeMenuItemAllBalls = controlMenu.add(resumeActionAllBalls);
+resumeMenuItemAllBalls.setEnabled(false);
 // Добавить в центр граничной компоновки поле Field
 getContentPane().add(field, BorderLayout.CENTER);
 }
