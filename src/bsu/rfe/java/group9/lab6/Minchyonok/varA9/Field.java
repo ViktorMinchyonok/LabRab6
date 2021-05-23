@@ -9,8 +9,11 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class Field extends JPanel {
-// Флаг приостановленности движения
+private static final int NUM_BALLS_TO_STOP = 5;
+  // Флаг приостановленности движения
+private boolean paused5Balls;
 private boolean paused;
+private volatile int stoppedBallsCount;
 // Динамический список скачущих мячей
 private ArrayList<BouncingBall> balls = new ArrayList<BouncingBall>(10);
 // Класс таймер отвечает за регулярную генерацию событий ActionEvent
@@ -28,6 +31,7 @@ public Field() {
 setBackground(Color.WHITE);
 // Запустить таймер
 repaintTimer.start();
+stoppedBallsCount = 0;
 }
 // Унаследованный от JPanel метод перерисовки компонента
 public void paintComponent(Graphics g) {
@@ -49,14 +53,21 @@ balls.add(new BouncingBall(this));
 
 // Метод синхронизированный, т.е. только один поток может
 // одновременно быть внутри
-public synchronized void pause() {
+public synchronized void pause5Balls() {
+		// Включить режим паузы
+pausedAll = true;	
+paused5Balls = true;
+	}
+ public synchronized void pauseAllBalls() {
 // Включить режим паузы
-paused = true;
+pausedAll = true;
+paused5Balls = true;
 }
 // Метод синхронизированный, т.е. только один поток может
 // одновременно быть внутри
 public synchronized void resume() {
 // Выключить режим паузы
+paused5Balls = false;
 paused = false;
 // Будим все ожидающие продолжения потоки
 notifyAll();
@@ -65,10 +76,13 @@ notifyAll();
 // (не включен ли режим паузы?)
 public synchronized void canMove(BouncingBall ball) throws
 InterruptedException {
-if (paused) {
-// Если режим паузы включен, то поток, зашедший
-// внутрь данного метода, засыпает
-wait();
+if(paused5Balls && stoppedBallsCount < NUM_BALLS_TO_STOP) {
+	stoppedBallsCount++;
+  wait();
+  stoppedBallsCount--;
 }
+if(pausedAll) {
+			wait();
+		}
 }
 }
