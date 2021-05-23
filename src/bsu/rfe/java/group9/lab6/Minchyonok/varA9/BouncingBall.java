@@ -52,6 +52,9 @@ Thread thisThread = new Thread(this);
 // Запускаем поток
 thisThread.start();
 }
+ public int getPosition(){
+		return position;
+	}
 // Метод run() исполняется внутри потока. Когда он завершает работу,
 // то завершается и поток
 public void run() {
