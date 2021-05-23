@@ -48,7 +48,7 @@ public void addBall() {
 //Заключается в добавлении в список нового экземпляра BouncingBall
 // Всю инициализацию положения, скорости, размера, цвета
 // BouncingBall выполняет сам в конструкторе
-balls.add(new BouncingBall(this));
+balls.add(new BouncingBall(this, balls.size()));
 }
 
 // Метод синхронизированный, т.е. только один поток может
